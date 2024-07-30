@@ -23,7 +23,10 @@ USE_TZ = False
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = "django-insecure-4&ef=af^^5hqgux(@ovcelryvh(+9qbg&zch=694f5(nd_4c91"
+
+IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -61,8 +64,8 @@ INSTALLED_APPS = [
     "storages",
 ]
 
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_ACCESS_KEY_ID = "AKIAZGXVLPEQX2KU37FQ"
+AWS_SECRET_ACCESS_KEY = "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"
 AWS_STORAGE_BUCKET_NAME = "powerpuff420"
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_S3_REGION_NAME = "ap-southeast-2"
@@ -216,6 +219,33 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+import dj_database_url
+
+if IS_HEROKU_APP:
+    # In production on Heroku the database configuration is derived from the `DATABASE_URL`
+    # environment variable by the dj-database-url package. `DATABASE_URL` will be set
+    # automatically by Heroku when a database addon is attached to your Heroku app. See:
+    # https://devcenter.heroku.com/articles/provisioning-heroku-postgres#application-config-vars
+    # https://github.com/jazzband/dj-database-url
+    DATABASES = {
+        "default": dj_database_url.config(
+            env="DATABASE_URL",
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        ),
+    }
+else:
+    # When running locally in development or in CI, a sqlite database file will be used instead
+    # to simplify initial setup. Longer term it's recommended to use Postgres locally too.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
 
 DATABASES = {
     "default": {
